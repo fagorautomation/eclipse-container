@@ -3,7 +3,7 @@
 echo "### FAGOR AUTOMATION Docker image ###"
 
 # Find out Yocto SDK environment setup file. It asumes
-# taht the SDK is installed in /workdir directory
+# that the SDK is installed in /workdir directory
 ENV_FILE=`ls /workdir/environment-setup-*`
 
 
@@ -17,15 +17,6 @@ fi
 # Create an executable file that calls the crosscompiler with needed all parameters
 echo "$CC \$@" > "$OECORE_NATIVE_SYSROOT/usr/bin/yocto-gcc"
 chmod +x "$OECORE_NATIVE_SYSROOT/usr/bin/yocto-gcc"
-
-
-export STRIP=x86_64-poky-linux-strip
-export RANLIB=x86_64-poky-linux-ranlib
-export OBJCOPY=x86_64-poky-linux-objcopy
-export OBJDUMP=x86_64-poky-linux-objdump
-export AR=x86_64-poky-linux-ar
-export NM=x86_64-poky-linux-nm
-
 
 # The same for the rest tooclhain tools
 echo "$CXX \$@" > "$OECORE_NATIVE_SYSROOT/usr/bin/yocto-g++"
