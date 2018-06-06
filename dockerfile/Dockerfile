@@ -17,7 +17,7 @@ RUN apt-get update
 # RUN apt-get -y upgrade 
 
 # Install basic packages. 
-RUN apt-get install -y curl git htop unzip vim wget byobu make 
+RUN apt-get install -y curl git htop unzip vim wget byobu make xz-utils sudo file
 
 # Install Eclipse dependency packages
 RUN apt-get install -y openjdk-8-jdk libcanberra-gtk-module
@@ -40,7 +40,8 @@ RUN chmod +x /run.sh
 RUN mkdir /home/developer && \
     echo "developer:x:1000:1000:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
     echo "developer:x:1000:" >> /etc/group && \
-    chown developer:developer -R /home/developer
+    chown developer:developer -R /home/developer && \
+    echo "developer ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER developer
 ENV HOME /home/developer
