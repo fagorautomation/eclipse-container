@@ -1,26 +1,50 @@
 #!/bin/sh
 
-echo "### FAGOR AUTOMATION Eclipse Docker image for developers ##"
+echo "### FAGOR AUTOMATION Eclipse Docker image for developers ###"
 
-if [ "$1" = "--sdk" ]
-then
-	echo "### Installing SDK in /workdir ###"
-	/workdir/$2 -d /workdir -y
-else
+setup_yocto_environment()
+{
 	# Find out Yocto SDK environment setup file. It asumes
 	# that the SDK is installed in /workdir directory
 	ENV_FILE=`ls /workdir/environment-setup-*`
-
-
+		
 	if [ -z "$ENV_FILE" ]
 	then
 		echo "SDK environment setup file not found."
+		return 0
 	else
 		echo "Setting up Yocto SDK environment."
 		. $ENV_FILE
-	
 		export LINUX_DIR="$OECORE_TARGET_SYSROOT/usr/src/kernel"
+		return 1
+	fi
+}
 
+
+if [ "$1" = "--sdk" ]
+then
+	# If there is one already installed, remove it first
+	if [ -d /workdir/sysroots ]
+	then
+		echo "### Deleting previusly installed SDK ###"
+		rm -fr /workdir/sysroots
+	fi
+	echo "### Installing SDK in /workdir ###"
+	/workdir/$2 -d /workdir -y
+	
+	setup_yocto_environment
+
+	if [ $? -eq 1 ]
+	then
+		echo "## External kernel module build from SDK needs a workaround ###"
+		cd $LINUX_DIR 
+ 		make scripts
+	fi 
+else
+	setup_yocto_environment
+	
+	if [ $? -eq 1 ]
+	then
 		if [ ! -f $OECORE_NATIVE_SYSROOT/usr/bin/yocto-gcc ]
 		then
 			echo "Creating yocto- prefix tooclhain."
